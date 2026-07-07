@@ -1,20 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { VERBS, PRONOUNS, isCorrect } from './verbs'
 import Stats from './components/Stats'
 
 const GROUPS = [
-  { id: 'all', label: 'All verbs' },
-  { id: 'irregular', label: 'Irregular' },
-  { id: 'modal', label: 'Modal' },
-  { id: 'regular', label: 'Regular' },
+  { id: 'all',       de: 'Alle Verben',      en: 'All verbs' },
+  { id: 'irregular', de: 'Unregelmäßige',    en: 'Irregular' },
+  { id: 'modal',     de: 'Modalverben',      en: 'Modal' },
+  { id: 'regular',   de: 'Regelmäßig',       en: 'Regular' },
 ]
 
 function loadBest() {
-  try {
-    return Number(localStorage.getItem('dt_best_streak')) || 0
-  } catch {
-    return 0
-  }
+  try { return Number(localStorage.getItem('dt_best_streak')) || 0 } catch { return 0 }
 }
 
 function pickCard(group) {
@@ -79,8 +75,9 @@ export default function App() {
   return (
     <div className="app">
       <header className="head">
-        <h1 className="title">Konjugator</h1>
-        <p className="sub">Drill the German present tense. Type the conjugated verb.</p>
+        <h1 className="title">Konjugationstrainer</h1>
+        <p className="sub-de">Auf dieser Seite können Sie deutsche Verben im Präsens üben. Wählen Sie eine Verbgruppe, lesen Sie den Satz und schreiben Sie die richtige konjugierte Form des Verbs.</p>
+        <p className="sub-en">On this page you can practise German verbs in the present tense. Choose a verb group, read the sentence and write the correct conjugated form of the verb.</p>
       </header>
 
       <div className="groups">
@@ -90,19 +87,23 @@ export default function App() {
             className={`chip ${group === g.id ? 'chip--on' : ''}`}
             onClick={() => changeGroup(g.id)}
           >
-            {g.label}
+            <span className="chip-de">{g.de}</span>
+            <span className="chip-en">{g.en}</span>
           </button>
         ))}
       </div>
 
       <main className={`card ${checked ? (correct ? 'card--ok' : 'card--no') : ''}`}>
-        <div className="card__group">{card.verb.group}</div>
         <div className="prompt">
           <span className="prompt__pron">{pronoun}</span>
-          <span className="prompt__blank">_____</span>
+          <span className="prompt__blank">{'―'.repeat(Math.max(6, expected.length + 2))}</span>
         </div>
+
         <div className="prompt__verb">
-          {card.verb.inf} <span className="prompt__en">· {card.verb.en}</span>
+          <span className="verb-de">{card.verb.inf}</span>
+          <span className="verb-sep">(</span>
+          <span className="verb-en">{card.verb.en}</span>
+          <span className="verb-sep">)</span>
         </div>
 
         <form onSubmit={onSubmit} className="answer">
@@ -110,33 +111,32 @@ export default function App() {
             className="answer__input"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            placeholder="conjugated form"
+            placeholder="Schreiben Sie das konjugierte Verb hier ... (write the conjugated verb here)"
             autoFocus
             spellCheck={false}
             autoComplete="off"
             disabled={checked}
           />
           <button className="answer__btn" type="submit">
-            {checked ? 'Next →' : 'Check'}
+            {checked
+              ? <><span className="btn-de">Weiter</span><span className="btn-en">Next</span></>
+              : <><span className="btn-de">Prüfen</span><span className="btn-en">Check</span></>
+            }
           </button>
         </form>
 
         {checked && (
           <div className={`feedback ${correct ? 'feedback--ok' : 'feedback--no'}`}>
             {correct ? (
-              <span>✓ Correct</span>
+              <span>Richtig! (Correct!)</span>
             ) : (
-              <span>✗ It's <strong>{pronoun} {expected}</strong></span>
+              <span>Falsch. Die richtige Antwort ist: <strong>{pronoun} {expected}</strong> (Wrong. The correct answer is: <strong>{pronoun} {expected}</strong>)</span>
             )}
           </div>
         )}
       </main>
 
       <Stats streak={streak} best={best} seen={seen} accuracy={accuracy} />
-
-      <footer className="footer">
-        Tip: umlauts optional — type <code>ae oe ue ss</code> if you like. React + Vite.
-      </footer>
     </div>
   )
 }
