@@ -20,6 +20,28 @@ function pickCard(group) {
   return { verb, idx }
 }
 
+// small confetti burst on a correct answer, vanilla, no deps
+function burst() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const colors = ['#7c3aed', '#db2777', '#f59e0b', '#22c55e', '#38bdf8', '#ffffff']
+  const cx = innerWidth / 2, cy = innerHeight * 0.42
+  for (let i = 0; i < 26; i++) {
+    const el = document.createElement('div')
+    el.className = 'dt-confetti'
+    el.style.background = colors[i % colors.length]
+    document.body.appendChild(el)
+    const ang = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 220
+    const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 60
+    el.animate(
+      [
+        { transform: `translate(${cx}px, ${cy}px) rotate(0deg)`, opacity: 1 },
+        { transform: `translate(${cx + dx}px, ${cy + dy + 280}px) rotate(${(Math.random() * 720 - 360) | 0}deg)`, opacity: 0 },
+      ],
+      { duration: 900 + Math.random() * 500, easing: 'cubic-bezier(0.2,0.7,0.2,1)' },
+    ).onfinish = () => el.remove()
+  }
+}
+
 export default function App() {
   const [group, setGroup] = useState('all')
   const [card, setCard] = useState(() => pickCard('all'))
@@ -49,6 +71,7 @@ export default function App() {
     setCorrect(ok)
     setSeen((s) => s + 1)
     if (ok) {
+      burst()
       setRight((r) => r + 1)
       const ns = streak + 1
       setStreak(ns)
