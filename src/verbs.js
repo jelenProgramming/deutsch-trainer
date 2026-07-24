@@ -24,7 +24,57 @@ export const VERBS = [
   { inf: 'sollen', en: 'should', group: 'modal', forms: ['soll', 'sollst', 'soll', 'sollen', 'sollt', 'sollen'] },
   { inf: 'dürfen', en: 'may / to be allowed', group: 'modal', forms: ['darf', 'darfst', 'darf', 'dürfen', 'dürft', 'dürfen'] },
   { inf: 'mögen', en: 'to like', group: 'modal', forms: ['mag', 'magst', 'mag', 'mögen', 'mögt', 'mögen'] },
+  { inf: 'anrufen', en: 'to call (up)', group: 'separable', forms: ['rufe an', 'rufst an', 'ruft an', 'rufen an', 'ruft an', 'rufen an'] },
+  { inf: 'aufstehen', en: 'to get up', group: 'separable', forms: ['stehe auf', 'stehst auf', 'steht auf', 'stehen auf', 'steht auf', 'stehen auf'] },
+  { inf: 'einkaufen', en: 'to shop', group: 'separable', forms: ['kaufe ein', 'kaufst ein', 'kauft ein', 'kaufen ein', 'kauft ein', 'kaufen ein'] },
+  { inf: 'ankommen', en: 'to arrive', group: 'separable', forms: ['komme an', 'kommst an', 'kommt an', 'kommen an', 'kommt an', 'kommen an'] },
+  { inf: 'fernsehen', en: 'to watch TV', group: 'separable', forms: ['sehe fern', 'siehst fern', 'sieht fern', 'sehen fern', 'seht fern', 'sehen fern'] },
 ]
+
+// Perfekt (present perfect) drill set, focused on the haben/sein auxiliary
+// choice: verbs of motion or change of state take sein, nearly everything
+// else takes haben. Each card asks only for the finite auxiliary that goes
+// with the participle - that's the part learners actually get wrong, not
+// the participle itself.
+export const PERFEKT_PRONOUNS = ['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie/Sie']
+
+const HABEN_FORMS = ['habe', 'hast', 'hat', 'haben', 'habt', 'haben']
+const SEIN_FORMS = ['bin', 'bist', 'ist', 'sind', 'seid', 'sind']
+
+export const PERFEKT_VERBS = [
+  { inf: 'gehen', en: 'to go', aux: 'sein', partizip: 'gegangen' },
+  { inf: 'kommen', en: 'to come', aux: 'sein', partizip: 'gekommen' },
+  { inf: 'fahren', en: 'to drive', aux: 'sein', partizip: 'gefahren' },
+  { inf: 'laufen', en: 'to run / walk', aux: 'sein', partizip: 'gelaufen' },
+  { inf: 'fliegen', en: 'to fly', aux: 'sein', partizip: 'geflogen' },
+  { inf: 'schwimmen', en: 'to swim', aux: 'sein', partizip: 'geschwommen' },
+  { inf: 'aufstehen', en: 'to get up', aux: 'sein', partizip: 'aufgestanden' },
+  { inf: 'werden', en: 'to become', aux: 'sein', partizip: 'geworden' },
+  { inf: 'bleiben', en: 'to stay', aux: 'sein', partizip: 'geblieben' },
+  { inf: 'sterben', en: 'to die', aux: 'sein', partizip: 'gestorben' },
+  { inf: 'machen', en: 'to do / make', aux: 'haben', partizip: 'gemacht' },
+  { inf: 'sehen', en: 'to see', aux: 'haben', partizip: 'gesehen' },
+  { inf: 'essen', en: 'to eat', aux: 'haben', partizip: 'gegessen' },
+  { inf: 'trinken', en: 'to drink', aux: 'haben', partizip: 'getrunken' },
+  { inf: 'lesen', en: 'to read', aux: 'haben', partizip: 'gelesen' },
+  { inf: 'kaufen', en: 'to buy', aux: 'haben', partizip: 'gekauft' },
+  { inf: 'schreiben', en: 'to write', aux: 'haben', partizip: 'geschrieben' },
+  { inf: 'sprechen', en: 'to speak', aux: 'haben', partizip: 'gesprochen' },
+  { inf: 'haben', en: 'to have', aux: 'haben', partizip: 'gehabt' },
+  { inf: 'spielen', en: 'to play', aux: 'haben', partizip: 'gespielt' },
+]
+
+export function pronounFor(card) {
+  return card.tense === 'perfekt' ? PERFEKT_PRONOUNS[card.idx] : PRONOUNS[card.idx]
+}
+
+export function expectedFor(card) {
+  if (card.tense === 'perfekt') {
+    const forms = card.verb.aux === 'sein' ? SEIN_FORMS : HABEN_FORMS
+    return forms[card.idx]
+  }
+  return card.verb.forms[card.idx]
+}
 
 // Lenient compare: case-insensitive, accepts ae/oe/ue for umlauts and ss for ß.
 export function normalize(s) {
