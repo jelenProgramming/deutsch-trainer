@@ -9,7 +9,15 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
-    extends: [js.configs.recommended, reactHooks.configs.flat['recommended-latest'], reactRefresh.configs.vite, prettier],
+    // react-hooks v7 moved the flat-config presets under `configs.flat`;
+    // the top-level `configs['recommended-latest']` is still the eslintrc shape
+    // and blows up flat config with "plugins must be an object".
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat['recommended-latest'],
+      reactRefresh.configs.vite,
+      prettier,
+    ],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -17,9 +25,7 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^[A-Z_]' }],
-      // localStorage access is wrapped in try/catch purely to survive private mode
-      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
 ])

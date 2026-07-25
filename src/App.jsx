@@ -41,7 +41,7 @@ function pickCard(tense, group, boxes) {
 // learned something" instead of firing on every single correct tap.
 function burst() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  const colors = ['#b9a5f5', '#ffc9d9', '#ffd98a', '#bdedd6', '#a8d8f5', '#ffffff']
+  const colors = ['#6b4bd6', '#3d2e5c', '#1c6b45', '#b02a4f', '#b35c00', '#d3cfe0']
   const cx = innerWidth / 2, cy = innerHeight * 0.42
   for (let i = 0; i < 26; i++) {
     const el = document.createElement('div')
@@ -120,7 +120,7 @@ export default function App() {
       if (milestone || promoted) burst()
       if (ns > best) {
         setBest(ns)
-        try { localStorage.setItem('dt_best_streak', String(ns)) } catch {}
+        try { localStorage.setItem('dt_best_streak', String(ns)) } catch { /* storage blocked, the streak just won't survive a reload */ }
       }
     } else {
       setStreak(0)
@@ -143,12 +143,12 @@ export default function App() {
     next(t, group, boxes)
   }
 
-  function toggleImmersive() {
-    setImmersive((v) => {
-      const nv = !v
-      try { localStorage.setItem('dt_immersive', nv ? '1' : '0') } catch {}
-      return nv
-    })
+  // Both language modes are rendered as separate buttons rather than one
+  // flipping toggle, so a learner can see what the alternative is before
+  // committing to it. Same state, same storage key as before.
+  function setImmersion(next) {
+    setImmersive(next)
+    try { localStorage.setItem('dt_immersive', next ? '1' : '0') } catch { /* storage blocked, the choice just won't survive a reload */ }
   }
 
   const diff = checked && !correct ? charDiff(answer.trim(), expected) : null
@@ -158,15 +158,26 @@ export default function App() {
       <header className="head">
         <div className="head__row">
           <h1 className="title">Konjugationstrainer</h1>
-          <button
-            type="button"
-            className={`immersion ${immersive ? 'immersion--on' : ''}`}
-            onClick={toggleImmersive}
-            aria-pressed={immersive}
-            title="Hide English glosses for a harder drill"
-          >
-            {immersive ? 'Nur Deutsch' : 'DE + EN'}
-          </button>
+          <div className="lang" role="group" aria-label="Sprache der Hinweise / gloss language">
+            <button
+              type="button"
+              className={`lang__opt ${!immersive ? 'lang__opt--on' : ''}`}
+              onClick={() => setImmersion(false)}
+              aria-pressed={!immersive}
+              title="Show English glosses alongside the German"
+            >
+              DE + EN
+            </button>
+            <button
+              type="button"
+              className={`lang__opt ${immersive ? 'lang__opt--on' : ''}`}
+              onClick={() => setImmersion(true)}
+              aria-pressed={immersive}
+              title="Hide English glosses for a harder drill"
+            >
+              Nur Deutsch
+            </button>
+          </div>
         </div>
         <p className="sub-de">Auf dieser Seite können Sie deutsche Verben üben. Wählen Sie eine Zeitform und eine Verbgruppe, lesen Sie den Satz und schreiben Sie die richtige Form des Verbs.</p>
         {!immersive && (
@@ -212,7 +223,7 @@ export default function App() {
           {tense === 'perfekt' ? (
             <>
               <span className="verb-de">{card.verb.partizip}</span>
-              <span className="verb-sep">·</span>
+              <span className="verb-rule" aria-hidden="true" />
               <span className="verb-de">{card.verb.inf}</span>
               {!immersive && (
                 <>
@@ -274,7 +285,7 @@ export default function App() {
                     <div className="diff__row">
                       <span className="diff__tag">You</span>
                       <span className="diff__word">
-                        {diff.prefix}<span className="diff__bad">{diff.typedMiddle || '–'}</span>
+                        {diff.prefix}<span className="diff__bad">{diff.typedMiddle || '(nichts)'}</span>
                       </span>
                     </div>
                     <div className="diff__row">

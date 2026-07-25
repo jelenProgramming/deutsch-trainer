@@ -15,8 +15,9 @@ lives in your browser.
   intermediate learners, and one that flashcard apps built around English
   speakers routinely skip.
 
-Toggle "Nur Deutsch" in the header to drop the English glosses once you
-don't need the crutch anymore.
+The header carries both gloss modes side by side - "DE + EN" and "Nur
+Deutsch" - so you can see what you are switching to. Pick "Nur Deutsch"
+to drop the English crutch once you don't need it anymore.
 
 ## Why the drill order isn't random
 
